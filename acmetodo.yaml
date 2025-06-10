@@ -1,7 +1,19 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Simple Todo API
+  description: A RESTful API for managing todo items with basic CRUD operations
   version: 1.0.0
+  termsOfService: https://api.ritzademo.com/terms
+  contact:
+    name: API Support
+    email: support@ritzademo.com
+    url: https://api.ritzademo.com/contact
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+externalDocs:
+  description: Find more info here
+  url: https://api.ritzademo.com/docs
 servers:
   - url: https://api.ritzademo.com
 tags:
@@ -133,9 +145,8 @@ components:
           type: boolean
           default: false
         dueDate:
-          type: string
+          type: [string, "null"]
           format: date
-          nullable: true
       required:
         - id
         - title
@@ -150,9 +161,8 @@ components:
           type: boolean
           default: false
         dueDate:
-          type: string
+          type: [string, "null"]
           format: date
-          nullable: true
       required:
         - title
     TodoUpdate:
@@ -164,7 +174,6 @@ components:
         completed:
           type: boolean
         dueDate:
-          type: string
+          type: [string, "null"]
           format: date
-          nullable: true
       additionalProperties: false
