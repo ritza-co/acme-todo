@@ -145,8 +145,9 @@ components:
           type: boolean
           default: false
         dueDate:
-          type: [string, "null"]
+          type: string
           format: date
+          nullable: true
       required:
         - id
         - title
@@ -161,8 +162,9 @@ components:
           type: boolean
           default: false
         dueDate:
-          type: [string, "null"]
+          type: string
           format: date
+          nullable: true
       required:
         - title
     TodoUpdate:
@@ -174,6 +176,7 @@ components:
         completed:
           type: boolean
         dueDate:
-          type: [string, "null"]
+          type: string
           format: date
+          nullable: true
       additionalProperties: false
