@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Simple Todo API
-  description: A RESTful API for managing todo items with basic CRUD operations
-  version: 1.0.0
+  title: Todo API with ChatGPT Connector
+  description: A RESTful API for managing todo items with ChatGPT connector endpoints for search and fetch operations
+  version: 2.0.0
   termsOfService: https://api.ritzademo.com/terms
   contact:
     name: API Support
@@ -15,10 +15,113 @@ externalDocs:
   description: Find more info here
   url: https://api.ritzademo.com/docs
 servers:
-  - url: https://api.ritzademo.com
+  - url: https://acme-todo-gpt-mcp.ritzademo.com
 tags:
   - name: Todos
 paths:
+  /add-secret-todo:
+    post:
+      operationId: addSecretTodo
+      summary: Add a secret todo (requires API key)
+      tags:
+        - Todos
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTodo'
+      responses:
+        '201':
+          description: The created secret todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '401':
+          description: Unauthorized - API key required
+  /read-secret-todos:
+    get:
+      operationId: readSecretTodos
+      summary: Read all secret todos (requires API key)
+      tags:
+        - Todos
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: A JSON array of secret todo items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+        '401':
+          description: Unauthorized - API key required
+  /search:
+    post:
+      operationId: search
+      summary: Search for todos based on query
+      description: Returns a list of potentially relevant todos from the data set
+      tags:
+        - Todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: Search query string
+              required:
+                - query
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                required:
+                  - results
+  /fetch:
+    post:
+      operationId: fetch
+      summary: Fetch complete todo details by ID
+      description: Retrieves the full contents of a todo item
+      tags:
+        - Todos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Unique identifier for the todo
+              required:
+                - id
+      responses:
+        '200':
+          description: Complete todo details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResult'
+        '404':
+          description: Todo not found
   /todos:
     get:
       operationId: listTodos
@@ -120,6 +223,11 @@ paths:
         '404':
           description: Todo not found
 components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-Key
+      in: header
   parameters:
     todoId:
       name: id
@@ -130,6 +238,57 @@ components:
         type: integer
         format: int64
   schemas:
+    SearchResult:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID for the todo item
+        title:
+          type: string
+          description: Title of the todo item
+        text:
+          type: string
+          description: Relevant snippet or preview text
+        url:
+          type: string
+          description: URL to the todo item
+      required:
+        - id
+        - title
+        - text
+        - url
+    FetchResult:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID for the todo item
+        title:
+          type: string
+          description: Title of the todo item
+        text:
+          type: string
+          description: Full text content of the todo
+        url:
+          type: string
+          description: URL to the todo item
+        metadata:
+          type: object
+          nullable: true
+          description: Optional metadata about the todo
+          properties:
+            completed:
+              type: boolean
+            dueDate:
+              type: string
+              format: date
+              nullable: true
+      required:
+        - id
+        - title
+        - text
+        - url
     Todo:
       type: object
       properties:
