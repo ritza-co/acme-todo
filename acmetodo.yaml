@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: Todo API with ChatGPT Connector
-  description: A RESTful API for managing todo items with ChatGPT connector endpoints for search and fetch operations
-  version: 2.0.0
+  title: Acme Todo MCP Server
+  description: A simple MCP server that provides search and fetch tools for a readonly todo list
+  version: 1.0.0
   termsOfService: https://api.ritzademo.com/terms
   contact:
     name: API Support
@@ -17,57 +17,15 @@ externalDocs:
 servers:
   - url: https://acme-todo-gpt-mcp.ritzademo.com
 tags:
-  - name: Todos
+  - name: MCP Tools
 paths:
-  /add-secret-todo:
-    post:
-      operationId: addSecretTodo
-      summary: Add a secret todo (requires API key)
-      tags:
-        - Todos
-      security:
-        - apiKey: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewTodo'
-      responses:
-        '201':
-          description: The created secret todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Todo'
-        '401':
-          description: Unauthorized - API key required
-  /read-secret-todos:
-    get:
-      operationId: readSecretTodos
-      summary: Read all secret todos (requires API key)
-      tags:
-        - Todos
-      security:
-        - apiKey: []
-      responses:
-        '200':
-          description: A JSON array of secret todo items
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Todo'
-        '401':
-          description: Unauthorized - API key required
   /search:
     post:
       operationId: search
       summary: Search for todos based on query
-      description: Returns a list of potentially relevant todos from the data set
+      description: MCP search tool - returns a list of potentially relevant todos from the data set
       tags:
-        - Todos
+        - MCP Tools
       requestBody:
         required: true
         content:
@@ -82,25 +40,20 @@ paths:
                 - query
       responses:
         '200':
-          description: Search results
+          description: Array of search results
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  results:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/SearchResult'
-                required:
-                  - results
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
   /fetch:
     post:
       operationId: fetch
       summary: Fetch complete todo details by ID
-      description: Retrieves the full contents of a todo item
+      description: MCP fetch tool - retrieves the full contents of a todo item
       tags:
-        - Todos
+        - MCP Tools
       requestBody:
         required: true
         content:
@@ -122,121 +75,7 @@ paths:
                 $ref: '#/components/schemas/FetchResult'
         '404':
           description: Todo not found
-  /todos:
-    get:
-      operationId: listTodos
-      summary: List all todos
-      tags:
-        - Todos
-      responses:
-        '200':
-          description: A JSON array of todo items
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Todo'
-    post:
-      operationId: createTodo
-      summary: Create a new todo
-      tags:
-        - Todos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewTodo'
-      responses:
-        '201':
-          description: The created todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Todo'
-  /todos/{id}:
-    parameters:
-      - $ref: '#/components/parameters/todoId'
-    get:
-      operationId: getTodo
-      summary: Retrieve a todo
-      tags:
-        - Todos
-      responses:
-        '200':
-          description: A todo item
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Todo'
-        '404':
-          description: Todo not found
-    put:
-      operationId: replaceTodo
-      summary: Replace a todo
-      tags:
-        - Todos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewTodo'
-      responses:
-        '200':
-          description: The updated todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Todo'
-        '404':
-          description: Todo not found
-    patch:
-      operationId: updateTodo
-      summary: Update a todo
-      tags:
-        - Todos
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TodoUpdate'
-      responses:
-        '200':
-          description: The updated todo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Todo'
-        '404':
-          description: Todo not found
-    delete:
-      operationId: deleteTodo
-      summary: Delete a todo
-      tags:
-        - Todos
-      responses:
-        '204':
-          description: Todo deleted
-        '404':
-          description: Todo not found
 components:
-  securitySchemes:
-    apiKey:
-      type: apiKey
-      name: X-API-Key
-      in: header
-  parameters:
-    todoId:
-      name: id
-      in: path
-      description: The id of the todo
-      required: true
-      schema:
-        type: integer
-        format: int64
   schemas:
     SearchResult:
       type: object
@@ -284,58 +123,11 @@ components:
               type: string
               format: date
               nullable: true
+            description:
+              type: string
+              nullable: true
       required:
         - id
         - title
         - text
         - url
-    Todo:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          readOnly: true
-          example: 1
-        title:
-          type: string
-          example: Buy milk
-        completed:
-          type: boolean
-          default: false
-        dueDate:
-          type: string
-          format: date
-          nullable: true
-      required:
-        - id
-        - title
-        - completed
-    NewTodo:
-      type: object
-      properties:
-        title:
-          type: string
-          example: Buy milk
-        completed:
-          type: boolean
-          default: false
-        dueDate:
-          type: string
-          format: date
-          nullable: true
-      required:
-        - title
-    TodoUpdate:
-      type: object
-      properties:
-        title:
-          type: string
-          example: Buy bread
-        completed:
-          type: boolean
-        dueDate:
-          type: string
-          format: date
-          nullable: true
-      additionalProperties: false
