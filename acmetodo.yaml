@@ -20,24 +20,19 @@ tags:
   - name: MCP Tools
 paths:
   /search:
-    post:
+    get:
       operationId: search
       summary: Search for todos based on query
       description: MCP search tool - returns a list of potentially relevant todos from the data set
       tags:
         - MCP Tools
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                query:
-                  type: string
-                  description: Search query string
-              required:
-                - query
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query string
       responses:
         '200':
           description: Search results
@@ -53,24 +48,19 @@ paths:
                 required:
                   - results
   /fetch:
-    post:
+    get:
       operationId: fetch
       summary: Fetch complete todo details by ID
       description: MCP fetch tool - retrieves the full contents of a todo item
       tags:
         - MCP Tools
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: Unique identifier for the todo
-              required:
-                - id
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the todo
       responses:
         '200':
           description: Complete todo details

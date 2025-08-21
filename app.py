@@ -43,18 +43,15 @@ todos_data = [
 
 
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
     """Search for todos based on query - MCP server search tool"""
-    if not request.is_json:
-        abort(400, description="Request must be JSON")
+    query = request.args.get('query')
     
-    data = request.get_json()
+    if not query:
+        abort(400, description="Query parameter is required")
     
-    if not data or 'query' not in data:
-        abort(400, description="Query is required")
-    
-    query = data['query'].lower()
+    query = query.lower()
     results = []
     
     for todo in todos_data:
@@ -85,19 +82,16 @@ def search():
     
     return jsonify({"results": results})
 
-@app.route('/fetch', methods=['POST'])
+@app.route('/fetch', methods=['GET'])
 def fetch():
     """Fetch complete todo details by ID - MCP server fetch tool"""
-    if not request.is_json:
-        abort(400, description="Request must be JSON")
+    id_param = request.args.get('id')
     
-    data = request.get_json()
-    
-    if not data or 'id' not in data:
-        abort(400, description="ID is required")
+    if not id_param:
+        abort(400, description="ID parameter is required")
     
     try:
-        todo_id = int(data['id'])
+        todo_id = int(id_param)
     except ValueError:
         abort(400, description="ID must be a valid integer")
     
@@ -148,4 +142,4 @@ def not_found(error):
     return jsonify({'error': 'Not Found', 'message': str(error.description)}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5004)
+    app.run(debug=True, host='0.0.0.0', port=5005)
