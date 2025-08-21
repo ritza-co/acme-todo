@@ -83,7 +83,7 @@ def search():
             }
             results.append(result)
     
-    return jsonify(results)
+    return jsonify({"results": results})
 
 @app.route('/fetch', methods=['POST'])
 def fetch():

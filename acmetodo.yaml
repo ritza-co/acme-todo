@@ -40,13 +40,18 @@ paths:
                 - query
       responses:
         '200':
-          description: Array of search results
+          description: Search results
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SearchResult'
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                required:
+                  - results
   /fetch:
     post:
       operationId: fetch

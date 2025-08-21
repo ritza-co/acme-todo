@@ -445,5 +445,3 @@ Your remote MCP server permits others to connect OpenAI to your services and all
 As someone building an MCP server, don't put anything malicious in your tool definitions.
 
 At this time, we only support search and document retrieval.
-
-Was this page useful?
